@@ -120,12 +120,12 @@ def create_servo_control_gui(arduino):
     def decrease_scale3(event):
         scale3.set(scale3.get() - 1)
     
-    root.bind('q', increase_scale1)
-    root.bind('p', decrease_scale1)
-    root.bind('a', increase_scale2)
-    root.bind('l', decrease_scale2)
-    root.bind('z', increase_scale3)
-    root.bind('m', decrease_scale3)
+    root.bind('p', increase_scale1)
+    root.bind('q', decrease_scale1)
+    root.bind('l', increase_scale2)
+    root.bind('a', decrease_scale2)
+    root.bind('m', increase_scale3)
+    root.bind('z', decrease_scale3)
     
     
 
