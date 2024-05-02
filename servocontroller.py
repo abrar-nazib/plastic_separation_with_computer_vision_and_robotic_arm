@@ -3,7 +3,7 @@ import time
 import math
 import tkinter as tk
 
-COM_PORT="COM15"
+COM_PORT="COM5"
 SUCTION_PUMP_PIN = 9
 SUCTION_PUMP_STATE = False
 BASE_SERVO_PIN = 3
@@ -58,8 +58,14 @@ def create_servo_control_gui(arduino):
 
     
     # Print the angles with button
-    def print_angles():
-        print(f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+    def print_angles(angle_entry_box):
+        # Clear the current text in the entry box
+        angle_entry_box.delete(0, tk.END)
+
+        # Insert the new text
+        angle_entry_box.insert(0, f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+
+        print(f"Base Angle: {BASE_SERVO_ANGLE}, Shoulder Angle: {SHOULDER_SERVO_ANGLE}, Elbow Angle: {ELBOW_SERVO_ANGLE}")
     
     root = tk.Tk()
     root.title("Servo Control")
@@ -81,10 +87,12 @@ def create_servo_control_gui(arduino):
     checkbox =  tk.Checkbutton(root, text="Suction Pump", command=toggle_suction_pump)
     checkbox.pack()
 
-    # Angle Labels
+    # Angle textbox 
+    angle_textbox = tk.Entry(root)
+    angle_textbox.pack()
     
     # Button
-    button = tk.Button(root, text="Print Angles", command=print_angles)
+    button = tk.Button(root, text="Print Angles", command=lambda: print_angles(angle_textbox))
     button.pack()
 
 
