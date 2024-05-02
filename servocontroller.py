@@ -124,7 +124,7 @@ def create_servo_control_gui(arduino):
     root.bind('q', decrease_scale1)
     root.bind('l', increase_scale2)
     root.bind('a', decrease_scale2)
-    root.bind('m', increase_scale3)
+    root.bind(',', increase_scale3)
     root.bind('z', decrease_scale3)
     
     
