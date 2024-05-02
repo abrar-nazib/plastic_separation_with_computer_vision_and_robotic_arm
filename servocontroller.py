@@ -57,19 +57,13 @@ def create_servo_control_gui(arduino):
         send_data(arduino)
 
     
-    # Print the angles with button
-    def print_angles(angle_entry_box):
-        # Clear the current text in the entry box
-        angle_entry_box.delete(0, tk.END)
 
-        # Insert the new text
-        angle_entry_box.insert(0, f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
-
-        print(f"Base Angle: {BASE_SERVO_ANGLE}, Shoulder Angle: {SHOULDER_SERVO_ANGLE}, Elbow Angle: {ELBOW_SERVO_ANGLE}")
+    
     
     root = tk.Tk()
     root.title("Servo Control")
     root.geometry("1920x300")
+    
     scale1 = tk.Scale(root, from_=0, to=180, orient=tk.HORIZONTAL, command=set_base_angle, length=1000)
     # Set the initial value of the scale
     scale1.set(BASE_SERVO_HOME_ANGLE)
@@ -91,10 +85,49 @@ def create_servo_control_gui(arduino):
     angle_textbox = tk.Entry(root)
     angle_textbox.pack()
     
+        # Print the angles with button
+    def print_angles(angle_entry_box):
+        # Clear the current text in the entry box
+        angle_entry_box.delete(0, tk.END)
+
+        # Insert the new text
+        angle_entry_box.insert(0, f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+
+        print(f"Base Angle: {BASE_SERVO_ANGLE}, Shoulder Angle: {SHOULDER_SERVO_ANGLE}, Elbow Angle: {ELBOW_SERVO_ANGLE}")
+        root.clipboard_clear()
+        root.clipboard_append(f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+    
     # Button
     button = tk.Button(root, text="Print Angles", command=lambda: print_angles(angle_textbox))
     button.pack()
 
+    
+    def increase_scale1(event):
+        scale1.set(scale1.get() + 1)
+
+    def decrease_scale1(event):
+        scale1.set(scale1.get() - 1)
+
+    def increase_scale2(event):
+        scale2.set(scale2.get() + 1)
+
+    def decrease_scale2(event):
+        scale2.set(scale2.get() - 1)
+
+    def increase_scale3(event):
+        scale3.set(scale3.get() + 1)
+
+    def decrease_scale3(event):
+        scale3.set(scale3.get() - 1)
+    
+    root.bind('q', increase_scale1)
+    root.bind('p', decrease_scale1)
+    root.bind('a', increase_scale2)
+    root.bind('l', decrease_scale2)
+    root.bind('z', increase_scale3)
+    root.bind('m', decrease_scale3)
+    
+    
 
     root.mainloop()
 
