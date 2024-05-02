@@ -56,6 +56,11 @@ def create_servo_control_gui(arduino):
         SUCTION_PUMP_STATE = not SUCTION_PUMP_STATE
         send_data(arduino)
 
+    
+    # Print the angles with button
+    def print_angles():
+        print(f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+    
     root = tk.Tk()
     root.title("Servo Control")
     root.geometry("1920x300")
@@ -75,6 +80,13 @@ def create_servo_control_gui(arduino):
     # Checkbox
     checkbox =  tk.Checkbutton(root, text="Suction Pump", command=toggle_suction_pump)
     checkbox.pack()
+
+    # Angle Labels
+    
+    # Button
+    button = tk.Button(root, text="Print Angles", command=print_angles)
+    button.pack()
+
 
     root.mainloop()
 
