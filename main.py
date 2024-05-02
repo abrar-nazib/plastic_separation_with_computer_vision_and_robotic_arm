@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import time
-CAM_NUMBER = 0
+CAM_NUMBER = 1
 RECORD = False
 
 def load_model(model_path):
@@ -140,7 +140,7 @@ def main():
     while True:
         frame = read_camera(cap, width, height)
         # (219, 19) (841, 11) (232,395) (852, 378)
-        processed_frame = preprocess_image(frame, (219, 19), (841, 11), (232,395), (852, 378))
+        processed_frame = preprocess_image(frame, (236, 54), (833, 49), (236,464), (862, 335))
         boxes = detect_plastic(processed_frame, model)
         draw_boxes(frame, boxes)
         cv2.imshow('frame', frame)

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import time
 
-CAM_NUMBER = 0
+CAM_NUMBER = 1
 CAPTURE_VIDEO = False
 
 def load_model(model_path):
