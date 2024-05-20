@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import time
 
-CAM_NUMBER = 1
+CAM_NUMBER = 'mixed_2.mp4'
 CAPTURE_VIDEO = False
 
 def load_model(model_path):
@@ -53,7 +53,7 @@ def main():
             fps = 1/(t2-t1)
             cv2.putText(processed_frame, f"FPS: {round(fps, 2)}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)     
             cv2.imshow('frame', processed_frame)
-
+            out.write(processed_frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         else:
