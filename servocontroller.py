@@ -3,7 +3,7 @@ import time
 import math
 import tkinter as tk
 
-COM_PORT="COM5"
+COM_PORT = "COM7"
 SUCTION_PUMP_PIN = 9
 SUCTION_PUMP_STATE = False
 BASE_SERVO_PIN = 3
@@ -14,9 +14,10 @@ SHOULDER_SERVO_HOME_ANGLE = 90
 SHOULDER_SERVO_ANGLE = 90
 ELBOW_SERVO_PIN = 5
 ELBOW_SERVO_HOME_ANGLE = 90
-ELBOW_SERVO_ANGLE  = 90
+ELBOW_SERVO_ANGLE = 90
 
-def connect_arduino():
+
+def connect_arduino(port=COM_PORT):
     try:
         ser = serial.Serial(COM_PORT, 115200)
         time.sleep(2)
@@ -26,22 +27,25 @@ def connect_arduino():
         ser = None
     return ser
 
+
 def send_data(arduino):
     global BASE_SERVO_ANGLE, SHOULDER_SERVO_ANGLE, ELBOW_SERVO_ANGLE, SUCTION_PUMP_STATE
     cmd_str = f"{int(BASE_SERVO_ANGLE)}:{int(SHOULDER_SERVO_ANGLE)}:{int(ELBOW_SERVO_ANGLE)}:{1 if SUCTION_PUMP_STATE else 0}\n"
     print(f"[INFO] Sending command: {cmd_str}")
     arduino.write(cmd_str.encode())
-    time.sleep(0.05)
+    time.sleep(0.1)
+
 
 # Create a trackbar with tkinter to control servo
 def create_servo_control_gui(arduino):
     global SUCTION_PUMP_STATE
+
     def set_base_angle(val):
         global BASE_SERVO_ANGLE
         BASE_SERVO_ANGLE = int(val)
         send_data(arduino)
 
-    def set_shoulder_angle(val):    
+    def set_shoulder_angle(val):
         global SHOULDER_SERVO_ANGLE
         SHOULDER_SERVO_ANGLE = int(val)
         send_data(arduino)
@@ -56,52 +60,71 @@ def create_servo_control_gui(arduino):
         SUCTION_PUMP_STATE = not SUCTION_PUMP_STATE
         send_data(arduino)
 
-    
-
-    
-    
     root = tk.Tk()
     root.title("Servo Control")
     root.geometry("1920x300")
-    
-    scale1 = tk.Scale(root, from_=0, to=180, orient=tk.HORIZONTAL, command=set_base_angle, length=1000)
+
+    scale1 = tk.Scale(
+        root, from_=0, to=180, orient=tk.HORIZONTAL, command=set_base_angle, length=1000
+    )
     # Set the initial value of the scale
     scale1.set(BASE_SERVO_HOME_ANGLE)
     scale1.pack()
 
-    scale2 = tk.Scale(root, from_=0, to=180, orient=tk.HORIZONTAL, command=set_shoulder_angle, length=1000)
+    scale2 = tk.Scale(
+        root,
+        from_=0,
+        to=180,
+        orient=tk.HORIZONTAL,
+        command=set_shoulder_angle,
+        length=1000,
+    )
     scale2.set(SHOULDER_SERVO_HOME_ANGLE)
     scale2.pack()
 
-    scale3 = tk.Scale(root, from_=0, to=180, orient=tk.HORIZONTAL, command=set_elbow_angle, length=1000)
+    scale3 = tk.Scale(
+        root,
+        from_=0,
+        to=180,
+        orient=tk.HORIZONTAL,
+        command=set_elbow_angle,
+        length=1000,
+    )
     scale3.set(ELBOW_SERVO_HOME_ANGLE)
     scale3.pack()
 
     # Checkbox
-    checkbox =  tk.Checkbutton(root, text="Suction Pump", command=toggle_suction_pump)
+    checkbox = tk.Checkbutton(root, text="Suction Pump", command=toggle_suction_pump)
     checkbox.pack()
 
-    # Angle textbox 
+    # Angle textbox
     angle_textbox = tk.Entry(root)
     angle_textbox.pack()
-    
-        # Print the angles with button
+
+    # Print the angles with button
     def print_angles(angle_entry_box):
         # Clear the current text in the entry box
         angle_entry_box.delete(0, tk.END)
 
         # Insert the new text
-        angle_entry_box.insert(0, f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
+        angle_entry_box.insert(
+            0, f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}"
+        )
 
-        print(f"Base Angle: {BASE_SERVO_ANGLE}, Shoulder Angle: {SHOULDER_SERVO_ANGLE}, Elbow Angle: {ELBOW_SERVO_ANGLE}")
+        print(
+            f"Base Angle: {BASE_SERVO_ANGLE}, Shoulder Angle: {SHOULDER_SERVO_ANGLE}, Elbow Angle: {ELBOW_SERVO_ANGLE}"
+        )
         root.clipboard_clear()
-        root.clipboard_append(f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}")
-    
+        root.clipboard_append(
+            f"{BASE_SERVO_ANGLE}:{SHOULDER_SERVO_ANGLE}:{ELBOW_SERVO_ANGLE}"
+        )
+
     # Button
-    button = tk.Button(root, text="Print Angles", command=lambda: print_angles(angle_textbox))
+    button = tk.Button(
+        root, text="Print Angles", command=lambda: print_angles(angle_textbox)
+    )
     button.pack()
 
-    
     def increase_scale1(event):
         scale1.set(scale1.get() + 1)
 
@@ -119,20 +142,18 @@ def create_servo_control_gui(arduino):
 
     def decrease_scale3(event):
         scale3.set(scale3.get() - 1)
-    
-    root.bind('p', increase_scale1)
-    root.bind('q', decrease_scale1)
-    root.bind('l', increase_scale2)
-    root.bind('a', decrease_scale2)
-    root.bind(',', increase_scale3)
-    root.bind('z', decrease_scale3)
-    
-    
+
+    root.bind("p", increase_scale1)
+    root.bind("q", decrease_scale1)
+    root.bind("l", increase_scale2)
+    root.bind("a", decrease_scale2)
+    root.bind(",", increase_scale3)
+    root.bind("z", decrease_scale3)
 
     root.mainloop()
 
 
-def move_arm(arduino, base_angle, shoulder_angle, elbow_angle):
+def move_arm(arduino, elbow_angle, shoulder_angle, base_angle):
     global BASE_SERVO_ANGLE, SHOULDER_SERVO_ANGLE, ELBOW_SERVO_ANGLE
 
     # Get the delta for each angle
@@ -155,11 +176,24 @@ def move_arm(arduino, base_angle, shoulder_angle, elbow_angle):
         SHOULDER_SERVO_ANGLE += shoulder_step
         ELBOW_SERVO_ANGLE += elbow_step
         send_data(arduino)
-        time.sleep(0.01)
+        time.sleep(0.005)
     BASE_SERVO_ANGLE = base_angle
     SHOULDER_SERVO_ANGLE = shoulder_angle
     ELBOW_SERVO_ANGLE = elbow_angle
     send_data(arduino)
+
+
+def turn_off_suction_pump(arduino):
+    global SUCTION_PUMP_STATE
+    SUCTION_PUMP_STATE = False
+    send_data(arduino)
+
+
+def turn_on_suction_pump(arduino):
+    global SUCTION_PUMP_STATE
+    SUCTION_PUMP_STATE = True
+    send_data(arduino)
+
 
 # create_servo_control_gui(arduino)
 
@@ -168,7 +202,7 @@ def move_arm(arduino, base_angle, shoulder_angle, elbow_angle):
 # [90, 45, 150]
 # [53, 135, 74]
 # [157, 135, 85]
-    
+
 # Connect arduino
 # arduino = connect_arduino()
 
@@ -176,6 +210,7 @@ def move_arm(arduino, base_angle, shoulder_angle, elbow_angle):
 # for i in range(10):
 #     send_data(arduino)
 #     time.sleep(0.5)
+
 
 # Move arm angles from one position to another
 def move_strategy(arduino):
@@ -199,7 +234,7 @@ def move_strategy(arduino):
     move_arm(arduino, 32, 130, 100)
 
     move_arm(arduino, 90, 90, 90)
-    
+
     move_arm(arduino, 40, 135, 90)
     SUCTION_PUMP_STATE = True
     send_data(arduino)
@@ -212,12 +247,15 @@ def move_strategy(arduino):
     SUCTION_PUMP_STATE = False
     send_data(arduino)
     move_arm(arduino, 145, 130, 100)
-    
+
     move_arm(arduino, 90, 90, 90)
     time.sleep(2)
 
-    
 
-arduino = connect_arduino()
-# move_strategy(arduino)
-create_servo_control_gui(arduino)
+if __name__ == "__main__":
+    arduino = connect_arduino()
+    # move_arm(arduino, 120, 90, 90)
+    # turn_on_suction_pump(arduino)
+    # time.sleep(2)
+    # move_strategy(arduino)
+    create_servo_control_gui(arduino)

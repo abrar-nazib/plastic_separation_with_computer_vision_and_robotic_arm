@@ -1,3 +1,2 @@
-for i in range(10):
-    send_data(arduino)
-    time.sleep(0.5)
+        # s1 += 10
+        # servocontroller.move_arm(arduino, s1, s2, s3)
